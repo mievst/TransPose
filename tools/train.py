@@ -40,6 +40,7 @@ from utils.utils import get_model_summary
 import dataset
 import models
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Train keypoints network')
     # general
@@ -117,13 +118,13 @@ def main():
         (1, 3, cfg.MODEL.IMAGE_SIZE[1], cfg.MODEL.IMAGE_SIZE[0])
     )
 
-    model = torch.nn.DataParallel(model, device_ids=cfg.GPUS).cuda()
-    
+    model = torch.nn.DataParallel(model, device_ids=cfg.GPUS).cpu()
+
 
     # define loss function (criterion) and optimizer
     criterion = JointsMSELoss(
         use_target_weight=cfg.LOSS.USE_TARGET_WEIGHT
-    ).cuda()
+    ).cpu()
 
     # Data loading code
     normalize = transforms.Normalize(
@@ -194,7 +195,7 @@ def main():
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, cfg.TRAIN.END_EPOCH, eta_min=cfg.TRAIN.LR_END, last_epoch=last_epoch)
 
-    model.cuda()
+    model.cpu()
 
 
     for epoch in range(begin_epoch, cfg.TRAIN.END_EPOCH):
@@ -209,7 +210,7 @@ def main():
             cfg, valid_loader, valid_dataset, model, criterion,
             final_output_dir, tb_log_dir, writer_dict
         )
-        
+
         lr_scheduler.step()
 
         if perf_indicator >= best_perf:

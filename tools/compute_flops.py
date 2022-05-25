@@ -21,14 +21,12 @@ from yacs.config import CfgNode
 def warmup(model, inputs, N=10):
     for i in range(N):
         out = model(inputs)
-    torch.cuda.synchronize()
 
 def measure_time(model, inputs, N=10):
     warmup(model, inputs)
     s = time.time()
     for i in range(N):
         out = model(inputs)
-    torch.cuda.synchronize()
     t = (time.time() - s) / N
     return t
 
@@ -65,7 +63,7 @@ torch.manual_seed(seed)
 np.random.seed(seed)
 random.seed(seed)
 
-  
+
 dataset = eval('dataset.'+cfg.DATASET.DATASET)(
         cfg, cfg.DATASET.ROOT, cfg.DATASET.TEST_SET, False,
         transforms.Compose([
@@ -79,12 +77,12 @@ for idx in range(100):
     img, _, _, _ = dataset[idx]
     images.append(img)
 
-device = torch.device('cuda')
+device = torch.device('cpu')
 results = {}
 _name = file_name.split('.')[-2]
 
 for model_name in [_name]:
-    
+
     model = eval('models.'+cfg.MODEL.NAME+'.get_pose_net')(
         cfg, is_train=True
     )

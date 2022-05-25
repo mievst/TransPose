@@ -6,11 +6,13 @@
 # --------------------------------------------------------
 
 import os
-from os.path import join as pjoin
-from setuptools import setup
 from distutils.extension import Extension
-from Cython.Distutils import build_ext
+from os.path import join as pjoin
+
 import numpy as np
+from Cython.Build import cythonize
+from Cython.Distutils import build_ext
+from setuptools import Command, Extension, setup
 
 
 def find_in_path(name, path):
@@ -53,7 +55,7 @@ def locate_cuda():
             raise EnvironmentError('The CUDA %s path could not be located in %s' % (k, v))
 
     return cudaconfig
-CUDA = locate_cuda()
+##CUDA = locate_cuda()
 
 
 # Obtain the numpy include directory.  This logic works across numpy versions.
@@ -112,9 +114,20 @@ ext_modules = [
         "cpu_nms",
         ["cpu_nms.pyx"],
         extra_compile_args={'gcc': ["-Wno-cpp", "-Wno-unused-function"]},
-        include_dirs = [numpy_include]
-    ),
-    Extension('gpu_nms',
+        include_dirs=[numpy_include],
+        sourcefiles=['cpu_nms.c']
+    )
+]
+
+setup(
+    name='nms',
+    ext_modules=cythonize(ext_modules),
+    # inject our custom trigger
+    cmdclass={'build_ext': custom_build_ext},
+)
+print("****")
+
+""" Extension('gpu_nms',
         ['nms_kernel.cu', 'gpu_nms.pyx'],
         library_dirs=[CUDA['lib64']],
         libraries=['cudart'],
@@ -130,12 +143,4 @@ ext_modules = [
                                      '--compiler-options',
                                      "'-fPIC'"]},
         include_dirs = [numpy_include, CUDA['include']]
-    ),
-]
-
-setup(
-    name='nms',
-    ext_modules=ext_modules,
-    # inject our custom trigger
-    cmdclass={'build_ext': custom_build_ext},
-)
+    ), """

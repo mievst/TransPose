@@ -87,7 +87,7 @@ def main():
 
     if cfg.TEST.MODEL_FILE:
         logger.info('=> loading model from {}'.format(cfg.TEST.MODEL_FILE))
-        ckpt_state_dict = torch.load(cfg.TEST.MODEL_FILE)
+        ckpt_state_dict = torch.load(cfg.TEST.MODEL_FILE, map_location=torch.device('cpu'))
         # print(ckpt_state_dict['pos_embedding'])  # FOR UNSeen Resolutions
         # ckpt_state_dict.pop('pos_embedding') # FOR UNSeen Resolutions
         model.load_state_dict(ckpt_state_dict, strict=True)   #  strict=False FOR UNSeen Resolutions
@@ -112,12 +112,12 @@ def main():
     #     print(model.pos_embedding.shape)
     ######### FOR UNSeen Resolutions  #########
 
-    model = torch.nn.DataParallel(model, device_ids=cfg.GPUS).cuda()
+    model = torch.nn.DataParallel(model, device_ids=cfg.GPUS).cpu()
 
     # define loss function (criterion) and optimizer
     criterion = JointsMSELoss(
         use_target_weight=cfg.LOSS.USE_TARGET_WEIGHT
-    ).cuda()
+    ).cpu()
 
     # Data loading code
     normalize = transforms.Normalize(

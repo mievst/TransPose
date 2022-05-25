@@ -33,19 +33,38 @@ apt-get install python3 && \
 apt install python-is-python3 && \
 apt install python3-pip && \
 apt install git && \
-apt-get install ffmpeg libsm6 libxext6 -y \
-apt install clang
+apt install clang && \
 apt install cmake
 ```
 
 ## 2. Install requirements
 ```
-cd Cartoon-StyleGAN-example
+cd TransPose
 pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 
-## 3. Close docker
+## 3. Make output (training models and files) and log (tensorboard log) directories under ${POSE_ROOT} & Make libs
+
+   ```bash
+   mkdir output log
+   cd lib
+   make
+   ```
+
+## 4. Run example
+
+   ```bash
+   python my_main.py
+   ```
+
+Note: To view an image, load it from a container:
+
+'''bash
+docker cp CONTAINER_ID:TransPose/YOUR_IMAGE.jpg <PATH TO DOWNLOAD FOLDER>
+'''
+
+## 5. Close docker
 ```
 exit
 docker ps -a

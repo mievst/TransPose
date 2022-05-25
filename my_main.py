@@ -6,9 +6,20 @@ import numpy as np
 import math
 import torchvision
 
+import os.path as osp
+import sys
+import os
+
+from visualize import update_config, add_path
+
 from PIL import Image
 import requests
 
+lib_path = osp.join('lib')
+add_path(lib_path)
+
+from config import cfg
+import models
 
 
 COCO_KEYPOINT_INDEXES = {
@@ -356,3 +367,33 @@ def main(image_bgr, save_path, box_model, model):
 
     cv2.imwrite(save_path, image_bgr)
     print('the result image has been saved as {}'.format(save_path))
+
+image_path = 'snow.jpg'
+image_bgr = cv2.imread(image_path)
+save_path = 'snow_output.jpg'
+
+box_model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
+
+file_name = 'experiments/coco/transpose_h/TP_H_w48_256x192_stage3_1_4_d96_h192_relu_enc6_mh1.yaml' # choose a yaml file
+f = open(file_name, 'r')
+update_config(cfg, file_name)
+
+device = torch.device('cpu')
+model = eval('models.'+cfg.MODEL.NAME+'.get_pose_net')(
+    cfg, is_train=True
+)
+
+if cfg.TEST.MODEL_FILE:
+    print('=> loading model from {}'.format(cfg.TEST.MODEL_FILE))
+    model.load_state_dict(torch.load(cfg.TEST.MODEL_FILE, map_location=torch.device('cpu')), strict=True)
+else:
+    raise ValueError("please choose one ckpt in cfg.TEST.MODEL_FILE")
+
+model.to(device)
+
+#model2 = torch.hub.load('yangsenius/TransPose:main', 'tph_a4_256x192', pretrained=True)
+main(image_bgr, save_path, box_model, model)
+
+result = "snow_output.jpg"
+im = Image.open(result)
+im

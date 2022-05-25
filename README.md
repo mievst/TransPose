@@ -40,7 +40,7 @@ apt install cmake
 ## 2. Install requirements
 ```
 cd TransPose
-pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
+pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 ```
 

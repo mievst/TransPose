@@ -60,9 +60,9 @@ pip install -r requirements.txt
 
 Note: To view an image, load it from a container:
 
-   '''bash
+   ```bash
    docker cp CONTAINER_ID:TransPose/YOUR_IMAGE.jpg "PATH_TO_DOWNLOAD_FOLDER"
-   '''
+   ```
 
 ## 5. Close docker
 ```

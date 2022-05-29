@@ -52,6 +52,12 @@ pip install -r requirements.txt
    make
    ```
 
+## 4. Run tests
+
+   ```bash
+   python test.py
+   ```
+
 ## 4. Run example
 
    ```bash

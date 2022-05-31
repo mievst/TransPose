@@ -33,6 +33,7 @@ apt-get install python3 && \
 apt install python-is-python3 && \
 apt install python3-pip && \
 apt install git && \
+apt-get install ffmpeg libsm6 libxext6 -y && \
 apt install clang && \
 apt install cmake
 ```
